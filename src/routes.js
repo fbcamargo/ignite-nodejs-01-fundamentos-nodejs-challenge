@@ -1,4 +1,3 @@
-import path from "node:path";
 import { Database } from "./database.js";
 import { randomUUID } from "node:crypto";
 import { buildRoutePath } from "./utils/build-route-path.js";
@@ -27,16 +26,16 @@ export const routes = [
     method: "POST",
     path: buildRoutePath("/tasks"),
     handler: (req, res) => {
-      const { title, description } = req.body;
-      const now = new Date();
-
-      if (!title)
+      if (!req.body?.title)
         return res
           .writeHead(400)
           .end(JSON.stringify({ error: "Informe um título" }));
 
-      if (!description)
+      if (!req.body?.description)
         return res.writeHead(400).end(JSON.stringify("Informe uma descrição"));
+
+      const { title, description } = req.body;
+      const now = new Date();
 
       const user = {
         id: randomUUID(),
@@ -55,22 +54,29 @@ export const routes = [
     method: "PUT",
     path: buildRoutePath("/tasks/:id"),
     handler: (req, res) => {
-      const { id } = req.params;
-      const { title, description } = req.body;
+      if (!req.params?.id)
+        return res
+          .writeHead(400)
+          .end(JSON.stringify({ error: "Informe um ID" }));
 
-      const task = database.select("tasks", { id });
+      const { id } = req.params;
+      console.log(id);
+      const [task] = database.select("tasks", { id });
+      console.log(task);
       if (!task)
         return res
           .writeHead(404)
           .end(JSON.stringify({ error: "Tarefa não encontrada" }));
 
-      if (!title)
+      if (!req.body?.title)
         return res
           .writeHead(400)
           .end(JSON.stringify({ error: "Informe um título" }));
 
-      if (!description)
+      if (!req.body?.description)
         return res.writeHead(400).end(JSON.stringify("Informe uma descrição"));
+
+      const { title, description } = req.body;
 
       task.title = title;
       task.description = description;
@@ -84,7 +90,18 @@ export const routes = [
     method: "DELETE",
     path: buildRoutePath("/tasks/:id"),
     handler: (req, res) => {
+      if (!req.params?.id)
+        return res
+          .writeHead(400)
+          .end(JSON.stringify({ error: "Informe um ID" }));
+
       const { id } = req.params;
+      const [task] = database.select("tasks", { id });
+      if (!task)
+        return res
+          .writeHead(404)
+          .end(JSON.stringify({ error: "Tarefa não encontrada" }));
+
       if (!database.select("tasks", { id }))
         return res
           .writeHead(404)
@@ -99,9 +116,18 @@ export const routes = [
     method: "PATCH",
     path: buildRoutePath("/tasks/:id/complete"),
     handler: (req, res) => {
-      const { id } = req.params;
+      if (!req.params?.id)
+        return res
+          .writeHead(400)
+          .end(JSON.stringify({ error: "Informe um ID" }));
 
-      const task = database.select("tasks", { id });
+      const { id } = req.params;
+      const [task] = database.select("tasks", { id });
+      if (!task)
+        return res
+          .writeHead(404)
+          .end(JSON.stringify({ error: "Tarefa não encontrada" }));
+
       if (!task)
         return res
           .writeHead(404)
