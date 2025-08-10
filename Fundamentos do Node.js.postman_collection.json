@@ -1,0 +1,675 @@
+{
+	"info": {
+		"_postman_id": "737c7f24-58eb-4085-b1cb-e9a6a3ed4220",
+		"name": "Fundamentos do Node.js",
+		"description": "API desenvolvida como parte do desafio **Fundamentos do Node.js** (Ignite - Rocketseat).  \n  \nCriada **sem o uso de frameworks** (como Express ou Fastify) — apenas recursos nativos do Node.js, exceto pela biblioteca para leitura de CSV.\n\n**Funcionalidades:**\n\n- **POST /tasks** → Criar tarefa\n    \n- **GET /tasks** → Listar tarefas (com filtro por título/descrição)\n    \n- **PUT /tasks/:id** → Atualizar título e/ou descrição\n    \n- **DELETE /tasks/:id** → Remover tarefa\n    \n- **PATCH /tasks/:id/complete** → Marcar/desmarcar como concluída\n    \n- **Importação via CSV** → Importar múltiplas tarefas usando **Streams nativas** para alta performance\n    \n\n**Principais Tecnologias:**\n\n- Node.js (HTTP, FS, Streams)\n    \n- UUID (geração de identificadores únicos)\n    \n- CSV Parser",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36497664"
+	},
+	"item": [
+		{
+			"name": "List",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/tasks",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "200",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/tasks",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tasks"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 10 Aug 2025 19:40:35 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						},
+						{
+							"key": "Content-Length",
+							"value": "1016"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": \"d03cfe9b-3a27-49dd-a871-ea42c0139119\",\n        \"title\": \"Task 01\",\n        \"description\": \"Descrição da Task 01\",\n        \"completed_at\": null,\n        \"created_at\": \"2025-08-10T19:40:34.158Z\",\n        \"updated_at\": \"2025-08-10T19:40:34.158Z\"\n    },\n    {\n        \"id\": \"a83ac2d5-2464-45d4-9963-fed19de75a4a\",\n        \"title\": \"Task 02\",\n        \"description\": \"Descrição da Task 02\",\n        \"completed_at\": null,\n        \"created_at\": \"2025-08-10T19:40:34.164Z\",\n        \"updated_at\": \"2025-08-10T19:40:34.164Z\"\n    },\n    {\n        \"id\": \"e177c415-9b09-4719-bef4-05b906f37fcb\",\n        \"title\": \"Task 03\",\n        \"description\": \"Descrição da Task 03\",\n        \"completed_at\": null,\n        \"created_at\": \"2025-08-10T19:40:34.165Z\",\n        \"updated_at\": \"2025-08-10T19:40:34.165Z\"\n    },\n    {\n        \"id\": \"a64e276d-348d-4ef7-b17d-2ac8ffbd17fd\",\n        \"title\": \"Task 04\",\n        \"description\": \"Descrição da Task 04\",\n        \"completed_at\": null,\n        \"created_at\": \"2025-08-10T19:40:34.167Z\",\n        \"updated_at\": \"2025-08-10T19:40:34.167Z\"\n    },\n    {\n        \"id\": \"a8d42305-0705-4dda-82f0-be57a948edf5\",\n        \"title\": \"Task 05\",\n        \"description\": \"Descrição da Task 05\",\n        \"completed_at\": null,\n        \"created_at\": \"2025-08-10T19:40:34.168Z\",\n        \"updated_at\": \"2025-08-10T19:40:34.168Z\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Store",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Tarefa 1\",\r\n    \"description\": \"Tarefa de teste\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/tasks",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "201",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Tarefa 1\",\r\n    \"description\": \"Tarefa de teste\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/tasks",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tasks"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 10 Aug 2025 19:54:28 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"68322095-a099-4f1b-91c6-b77b0bbc8f84\",\n    \"title\": \"Tarefa 1\",\n    \"description\": \"Tarefa de teste\",\n    \"completed_at\": null,\n    \"created_at\": \"2025-08-10T19:54:28.731Z\",\n    \"updated_at\": \"2025-08-10T19:54:28.731Z\"\n}"
+				},
+				{
+					"name": "400",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/tasks",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tasks"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 10 Aug 2025 19:18:36 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Informe um título\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Tarefa Edit\",\r\n    \"description\": \"Tarefa de teste edit\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/tasks/:id",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"tasks",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "68322095-a099-4f1b-91c6-b77b0bbc8f84"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "204",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Tarefa Edit\",\r\n    \"description\": \"Tarefa de teste edit\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/tasks/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "01a677b3-c230-40d1-9e83-e80eb2494ea9"
+								}
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 10 Aug 2025 19:33:00 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "400",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/tasks/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "01a677b3-c230-40d1-9e83-e80eb2494ea9"
+								}
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 10 Aug 2025 19:34:38 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Informe um título\"\n}"
+				},
+				{
+					"name": "404",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/tasks/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "01a677b3-c230-40d1-9e83-e80eb2494ea2"
+								}
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 10 Aug 2025 19:35:11 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Tarefa não encontrada\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Complete",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/tasks/:id/complete",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"tasks",
+						":id",
+						"complete"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "68322095-a099-4f1b-91c6-b77b0bbc8f84"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "204",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/tasks/:id/complete",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tasks",
+								":id",
+								"complete"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "01a677b3-c230-40d1-9e83-e80eb2494ea9"
+								}
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 10 Aug 2025 19:35:46 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "404",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/tasks/:id/complete",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tasks",
+								":id",
+								"complete"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "01a677b3-c230-40d1-9e83-e80eb2494ea2"
+								}
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 10 Aug 2025 19:36:14 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Tarefa não encontrada\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/tasks/:id",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"tasks",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "68322095-a099-4f1b-91c6-b77b0bbc8f84"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "204",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/tasks/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "01a677b3-c230-40d1-9e83-e80eb2494ea9"
+								}
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 10 Aug 2025 19:38:42 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "404",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/tasks/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "01a677b3-c230-40d1-9e83-e80eb2494ea2"
+								}
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 10 Aug 2025 19:37:50 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Tarefa não encontrada\"\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://localhost:3333",
+			"type": "string"
+		}
+	]
+}
