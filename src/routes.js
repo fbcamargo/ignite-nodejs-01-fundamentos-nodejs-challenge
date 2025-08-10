@@ -2,15 +2,19 @@ import { Database } from "./database.js";
 import { randomUUID } from "node:crypto";
 import { buildRoutePath } from "./utils/build-route-path.js";
 
+function sendError(res, status, message) {
+  return res.writeHead(status).end(JSON.stringify({ error: message }));
+}
+
 const database = new Database();
 
 export const routes = [
   {
     method: "GET",
     path: buildRoutePath("/tasks"),
-    handler: (req, res) => {
+    handler: async (req, res) => {
       const { search } = req.query;
-      const tasks = database.select(
+      const tasks = await database.select(
         "tasks",
         search
           ? {
@@ -25,19 +29,13 @@ export const routes = [
   {
     method: "POST",
     path: buildRoutePath("/tasks"),
-    handler: (req, res) => {
-      if (!req.body?.title)
-        return res
-          .writeHead(400)
-          .end(JSON.stringify({ error: "Informe um título" }));
+    handler: async (req, res) => {
+      const { title, description } = req.body || {};
+      if (!title) return sendError(res, 400, "Informe um título");
+      if (!description) return sendError(res, 400, "Informe uma descrição");
 
-      if (!req.body?.description)
-        return res.writeHead(400).end(JSON.stringify("Informe uma descrição"));
-
-      const { title, description } = req.body;
       const now = new Date();
-
-      const user = {
+      const task = {
         id: randomUUID(),
         title,
         description,
@@ -45,97 +43,52 @@ export const routes = [
         created_at: now,
         updated_at: now,
       };
-      database.insert("tasks", user);
-
-      return res.writeHead(201).end();
+      await database.insert("tasks", task);
+      return res.writeHead(201).end(JSON.stringify(task));
     },
   },
   {
     method: "PUT",
     path: buildRoutePath("/tasks/:id"),
-    handler: (req, res) => {
-      if (!req.params?.id)
-        return res
-          .writeHead(400)
-          .end(JSON.stringify({ error: "Informe um ID" }));
+    handler: async (req, res) => {
+      const { id } = req.params || {};
+      if (!id) return sendError(res, 400, "Informe um ID");
+      const task = (await database.select("tasks", { id }))[0];
+      if (!task) return sendError(res, 404, "Tarefa não encontrada");
 
-      const { id } = req.params;
-      console.log(id);
-      const [task] = database.select("tasks", { id });
-      console.log(task);
-      if (!task)
-        return res
-          .writeHead(404)
-          .end(JSON.stringify({ error: "Tarefa não encontrada" }));
-
-      if (!req.body?.title)
-        return res
-          .writeHead(400)
-          .end(JSON.stringify({ error: "Informe um título" }));
-
-      if (!req.body?.description)
-        return res.writeHead(400).end(JSON.stringify("Informe uma descrição"));
-
-      const { title, description } = req.body;
+      const { title, description } = req.body || {};
+      if (!title) return sendError(res, 400, "Informe um título");
+      if (!description) return sendError(res, 400, "Informe uma descrição");
 
       task.title = title;
       task.description = description;
       task.updated_at = new Date();
-      database.update("tasks", id, task);
-
+      await database.update("tasks", id, task);
       return res.writeHead(204).end();
     },
   },
   {
     method: "DELETE",
     path: buildRoutePath("/tasks/:id"),
-    handler: (req, res) => {
-      if (!req.params?.id)
-        return res
-          .writeHead(400)
-          .end(JSON.stringify({ error: "Informe um ID" }));
-
-      const { id } = req.params;
-      const [task] = database.select("tasks", { id });
-      if (!task)
-        return res
-          .writeHead(404)
-          .end(JSON.stringify({ error: "Tarefa não encontrada" }));
-
-      if (!database.select("tasks", { id }))
-        return res
-          .writeHead(404)
-          .end(JSON.stringify({ error: "Tarefa não encontrada" }));
-
-      database.delete("tasks", id);
-
+    handler: async (req, res) => {
+      const { id } = req.params || {};
+      if (!id) return sendError(res, 400, "Informe um ID");
+      const task = (await database.select("tasks", { id }))[0];
+      if (!task) return sendError(res, 404, "Tarefa não encontrada");
+      await database.delete("tasks", id);
       return res.writeHead(204).end();
     },
   },
   {
     method: "PATCH",
     path: buildRoutePath("/tasks/:id/complete"),
-    handler: (req, res) => {
-      if (!req.params?.id)
-        return res
-          .writeHead(400)
-          .end(JSON.stringify({ error: "Informe um ID" }));
-
-      const { id } = req.params;
-      const [task] = database.select("tasks", { id });
-      if (!task)
-        return res
-          .writeHead(404)
-          .end(JSON.stringify({ error: "Tarefa não encontrada" }));
-
-      if (!task)
-        return res
-          .writeHead(404)
-          .end(JSON.stringify({ error: "Tarefa não encontrada" }));
-
-      task.completed_at = !!task.completed_at ? null : new Date();
-      database.update("tasks", id, task);
-
+    handler: async (req, res) => {
+      const { id } = req.params || {};
+      if (!id) return sendError(res, 400, "Informe um ID");
+      const task = (await database.select("tasks", { id }))[0];
+      if (!task) return sendError(res, 404, "Tarefa não encontrada");
+      task.completed_at = task.completed_at ? null : new Date();
+      await database.update("tasks", id, task);
       return res.writeHead(204).end();
     },
   },
