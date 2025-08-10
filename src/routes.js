@@ -30,6 +30,14 @@ export const routes = [
       const { title, description } = req.body;
       const now = new Date();
 
+      if (!title)
+        return res
+          .writeHead(400)
+          .end(JSON.stringify({ error: "Informe um título" }));
+
+      if (!description)
+        return res.writeHead(400).end(JSON.stringify("Informe uma descrição"));
+
       const user = {
         id: randomUUID(),
         title,
@@ -44,26 +52,45 @@ export const routes = [
     },
   },
   {
-    method: "DELETE",
-    path: buildRoutePath("/tasks/:id"),
-    handler: (req, res) => {
-      const { id } = req.params;
-      database.delete("tasks", id);
-      return res.writeHead(204).end();
-    },
-  },
-  {
     method: "PUT",
     path: buildRoutePath("/tasks/:id"),
     handler: (req, res) => {
       const { id } = req.params;
       const { title, description } = req.body;
 
-      database.update("tasks", id, {
-        title,
-        description,
-        updated_at: new Date(),
-      });
+      const task = database.select("tasks", { id });
+      if (!task)
+        return res
+          .writeHead(404)
+          .end(JSON.stringify({ error: "Tarefa não encontrada" }));
+
+      if (!title)
+        return res
+          .writeHead(400)
+          .end(JSON.stringify({ error: "Informe um título" }));
+
+      if (!description)
+        return res.writeHead(400).end(JSON.stringify("Informe uma descrição"));
+
+      task.title = title;
+      task.description = description;
+      task.updated_at = new Date();
+      database.update("tasks", id, task);
+
+      return res.writeHead(204).end();
+    },
+  },
+  {
+    method: "DELETE",
+    path: buildRoutePath("/tasks/:id"),
+    handler: (req, res) => {
+      const { id } = req.params;
+      if (!database.select("tasks", { id }))
+        return res
+          .writeHead(404)
+          .end(JSON.stringify({ error: "Tarefa não encontrada" }));
+
+      database.delete("tasks", id);
 
       return res.writeHead(204).end();
     },
@@ -74,9 +101,14 @@ export const routes = [
     handler: (req, res) => {
       const { id } = req.params;
 
-      database.update("tasks", id, {
-        completed_at: new Date(),
-      });
+      const task = database.select("tasks", { id });
+      if (!task)
+        return res
+          .writeHead(404)
+          .end(JSON.stringify({ error: "Tarefa não encontrada" }));
+
+      task.completed_at = !!task.completed_at ? null : new Date();
+      database.update("tasks", id, task);
 
       return res.writeHead(204).end();
     },
